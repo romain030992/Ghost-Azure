@@ -95,7 +95,7 @@ stages:
             
             $resourceGroup = $env:RESOURCEGROUP
             $webApp = $env:WEBAPP
-            $slotName = $env:SLOTNAME
+            $slotName = $env:SLOTNAMESTAGING
             $webJobName = $env:WEBJOBNAME
             
             Write-Host "Trigger database backup"
@@ -168,7 +168,7 @@ stages:
           replaceExistingArchive: true
 
       - task: CopyFiles@2
-        displayName: 'Copy File to: $(TargetFolder)'
+        displayName: 'Copy File to folder ArtifactsToBePublished'
         inputs:
           SourceFolder: '$(Build.ArtifactStagingDirectory)'
           Contents: '$(Build.BuildId).zip'
@@ -226,10 +226,6 @@ stages:
               SpecifySlotOrASE: true
               ResourceGroupName: '$(ResourceGroup)'
               Slot: '$(SlotNameStaging)'
-          - task: Webapp Warmup@1
-            inputs:
-              Url: '$(UrlStaging)'
-              SleepPeriod: '10'
 - stage: DeployProduction
   displayName: Deploy Production
   dependsOn: DeployStaging
@@ -312,7 +308,3 @@ stages:
               SpecifySlotOrASE: true
               ResourceGroupName: '$(ResourceGroup)'
               Slot: '$(SlotNameStaging)'
-          - task: Webapp Warmup@1
-            inputs:
-              Url: '$(UrlStaging)'
-              SleepPeriod: '10'
